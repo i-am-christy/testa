@@ -12,7 +12,7 @@ env/
 
 # Dlib model weights
 *.dat
-
+*.pt
 # System files
 .DS_Store
 Thumbs.db
