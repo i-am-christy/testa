@@ -10,9 +10,11 @@ env/
 .vscode/
 .idea/
 
-# Dlib model weights
+# Model weights (large binaries) - fetch separately, don't commit
 *.dat
 *.pt
+*.onnx
+buffalo_1/
 # System files
 .DS_Store
 Thumbs.db

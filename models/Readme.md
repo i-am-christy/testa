@@ -6,6 +6,12 @@
 > landmarks + solvePnP, YOLOv8n object/multi-person detection, violation logging), served over
 > websockets from `../backend/api/v1/routes/verification.py`. See the top-level `../README.md`
 > for how to actually run the proctoring system.
+>
+> The `buffalo_1/` InsightFace model weights and `yolov8n.pt` used to be committed here (~340MB)
+> and were removed from git history for repo size. `shape_predictor_68_face_landmarks.dat` is
+> fetched by `../backend/download_assets.sh`. If you want to run `realtime_proctoring.ipynb`
+> locally, re-download the buffalo_1 model via `insightface.app.FaceAnalysis(name="buffalo_1")`
+> (it auto-downloads on first use) rather than committing the weights again.
 
 This project implements a real-time face verification and liveness detection system using a webcam feed. It verifies a user against a provided reference image and performs a liveness check by detecting blinks.
 
