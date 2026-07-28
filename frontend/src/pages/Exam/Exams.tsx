@@ -7,6 +7,10 @@ import usePaginate from "../../hooks/usePaginate";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useAntiCheat from "../../hooks/useAntiCheat";
+import ProctoringPanel from "../../components/Proctoring/ProctoringPanel";
+import { useExamSessionStore } from "../../store/useExamSessionStore";
+import { reportViolation } from "../../api/verification/verification.api";
+import { submitExam } from "../../api/exam/exam.api";
 
 const Exams = () => {
   const navigate = useNavigate();
@@ -136,15 +140,32 @@ const Exams = () => {
   const [answers, setAnswers] = useState<
     { questionId: number; selectedOption: string; flagged: boolean }[]
   >([]);
-  console.log(answers);
-useAntiCheat({
-  onViolation: (type, message) => {
-    console.warn(`[${type.toUpperCase()} VIOLATION] violating`);
-    alert(message); 
-  }
-});
 
-  // useAntiCheat({ onViolation: handleViolation });
+  const sessionId = useExamSessionStore((s) => s.sessionId);
+  const [antiCheatFeed, setAntiCheatFeed] = useState<
+    { type: string; message: string; at: string }[]
+  >([]);
+
+  const ANTI_CHEAT_TYPE_MAP: Record<string, string> = {
+    "tab-switch": "tab_switch",
+    "window-blur": "window_blur",
+    unload: "unload_attempt",
+    copy: "copy_paste",
+    paste: "copy_paste",
+    devtools: "devtools",
+  };
+
+  useAntiCheat({
+    onViolation: (type, message) => {
+      const at = new Date().toISOString();
+      setAntiCheatFeed((prev) => [{ type, message, at }, ...prev].slice(0, 6));
+
+      const backendType = ANTI_CHEAT_TYPE_MAP[type];
+      if (backendType && sessionId) {
+        reportViolation(sessionId, backendType, message).catch(() => {});
+      }
+    },
+  });
   const progress = (answers.length / questions.length) * 100;
   const handleSelectAnswer = (questionId: number, selectedOption: string) => {
     setAnswers((prev) => {
@@ -160,7 +181,8 @@ useAntiCheat({
   };
 
   return (
-    <div className="bg-[#f5f5f5] h-auto flex flex-col items-center w-full  pt-4 px-12.5">
+    <div className="bg-[#f5f5f5] h-auto flex w-full pt-4 px-12.5 gap-6">
+    <div className="flex flex-col items-center flex-1 min-w-0">
       <div className="w-full flex gap-3.5 my-7.5 p-6.5 bg-[#FEFCE8] items-center rounded-2xl border border-[#FEF08A]">
         <div>
           <Caution />
@@ -173,7 +195,7 @@ useAntiCheat({
             To ensure academic integrity, this exam session will be proctored.
             Your{" "}
             <span className="font-bold">
-               camera and microphone will be active 
+              camera and microphone will be active
             </span>
             throughout the exam. Any suspicious activity will be flagged for
             review.
@@ -302,6 +324,15 @@ useAntiCheat({
               if (hasNext) {
                 next();
               } else {
+                if (sessionId) {
+                  submitExam(
+                    sessionId,
+                    answers.map((a) => ({
+                      question_id: String(a.questionId),
+                      answer: a.selectedOption,
+                    }))
+                  ).catch(() => {});
+                }
                 navigate("/dashboard/exam-submitted");
               }
             }}
@@ -316,6 +347,10 @@ useAntiCheat({
       <div className="my-5 text-center text-sm text-gray-500 tracking-wide">
         Powered by  ICAN x TESTA
       </div>
+    </div>
+    <div className="pt-7.5">
+      <ProctoringPanel externalViolations={antiCheatFeed} />
+    </div>
     </div>
   );
 };

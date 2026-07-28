@@ -10,7 +10,11 @@ export async function registerUser(signUpPayload: SignUp){
     const res = await api.post("/api/v1/auth/register", signUpPayload)
     return res.data
 }
-export async function uploadSignInImage(image: any){
-    const res = await api.post("/api/v1/profile/upload-image", image)
+export async function uploadSignInImage(image: File){
+    const formData = new FormData()
+    formData.append("file", image)
+    const res = await api.post("/api/v1/profile/upload-image", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+    })
     return res.data
 }

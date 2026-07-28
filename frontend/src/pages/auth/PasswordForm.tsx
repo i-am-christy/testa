@@ -1,3 +1,4 @@
+import { useState } from "react";
 import useToggle from "../../hooks/useToggle";
 import { AnimatePresence, motion } from "framer-motion";
 import { RiEyeCloseLine } from "react-icons/ri";
@@ -9,16 +10,34 @@ import useFormChangeHandler from "../../hooks/useFormChangeHandler";
 import { useSwitchStore } from "../../store/useSwitchStore";
 import { useShallow } from "zustand/shallow";
 export const PasswordForm = () => {
-  const {goToUploadStep} = useSwitchStore(useShallow((s) => ({
-    goToUploadStep: s.goToUploadStep
+  const {goToUploadStep, setPasswordInfo} = useSwitchStore(useShallow((s) => ({
+    goToUploadStep: s.goToUploadStep,
+    setPasswordInfo: s.setPasswordInfo,
   })))
   const [passwordForm, handleFormChange] = useFormChangeHandler({
-    password: "", 
+    password: "",
     confirmPassword: ""
 
   });
   const [isConfirmPassword, toggleConfirmedPassword] = useToggle();
   const [isPasswordVisible, togglePassword] = useToggle();
+  const [error, setError] = useState("");
+
+  const handleNext = () => {
+    if (passwordForm.password !== passwordForm.confirmPassword) {
+      setError("Passwords do not match.");
+      return;
+    }
+    if (passwordForm.password.length < 8) {
+      setError("Password must be at least 8 characters.");
+      return;
+    }
+    setPasswordInfo({
+      password: passwordForm.password,
+      confirm_password: passwordForm.confirmPassword,
+    });
+    goToUploadStep();
+  };
   return (
     <>
       <form className="pt-8 flex flex-col gap-6.5">
@@ -56,6 +75,7 @@ export const PasswordForm = () => {
               placeholder="*****************"
               className="w-full border p-4 mt-2 border-[#DADADA] rounded-sm"
               name="confirmPassword"
+              onChange={handleFormChange}
               type={isConfirmPassword ? "text" : "password"}
             />
             <button
@@ -154,12 +174,13 @@ export const PasswordForm = () => {
               </motion.div>
             )}
           </AnimatePresence>
+          {error && <p className="text-red-600 text-sm mt-3">{error}</p>}
           <div className="w-full flex justify-center mt-10">
             <button
               type="button"
               onClick={(e) => {
                 e.preventDefault();
-                goToUploadStep();
+                handleNext();
               }}
               className="cursor-pointer font-medium w-5/12 bg-[var(--primary-color)] text-white py-2 rounded-md"
             >

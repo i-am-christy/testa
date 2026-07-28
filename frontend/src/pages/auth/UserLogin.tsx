@@ -1,10 +1,14 @@
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import useFormChangeHandler from "../../hooks/useFormChangeHandler";
 import { useShallow } from "zustand/shallow";
 import { useAuthStore } from "../../store/AuthStore";
 const UserLogin = () => {
-  const { login } = useAuthStore(
+  const navigate = useNavigate();
+  const { login, error: authError } = useAuthStore(
     useShallow((s) => ({
       login: s.login,
+      error: s.error,
     }))
   );
 
@@ -12,9 +16,20 @@ const UserLogin = () => {
     email: "",
     password: "",
   });
+  const [submitting, setSubmitting] = useState(false);
+
+  const handleLogin = async () => {
+    setSubmitting(true);
+    const user = await login(loginDetails);
+    setSubmitting(false);
+    if (user) {
+      navigate(user.is_admin ? "/admin" : "/dashboard");
+    }
+  };
+
   return (
     <>
-      <form className="  flex flex-col gap-6.5">
+      <form className="  flex flex-col gap-6.5" onSubmit={(e) => e.preventDefault()}>
         <div>
           <label htmlFor="Email">Email/ICAN No.</label>
           <input
@@ -31,11 +46,12 @@ const UserLogin = () => {
             placeholder="*****************"
             name="password"
             className="w-full border p-4 mt-2 border-[#DADADA] rounded-sm"
-            type="text"
+            type="password"
             onChange={handleLoginChange}
           />
         </div>
       </form>
+      {authError && <p className="text-red-600 text-sm mt-3">{authError}</p>}
       <div className="w-full flex mt-9 justify-between">
         <div>Remember Me</div>
         <p className="font-medium text-[16px] text-[var(--primary-color)]">
@@ -44,14 +60,11 @@ const UserLogin = () => {
       </div>
       <div className="w-full flex justify-center mt-15">
         <button
-          onClick={() => {
-            // navigate("/dashboard");
-            login(loginDetails);
-            console.log("Login Payload:", loginDetails, import.meta.env);
-          }}
-          className="font-medium w-5/12 bg-[var(--primary-color)] text-white py-2 rounded-md"
+          disabled={submitting}
+          onClick={handleLogin}
+          className="font-medium w-5/12 bg-[var(--primary-color)] text-white py-2 rounded-md disabled:opacity-50"
         >
-          Login
+          {submitting ? "Logging in..." : "Login"}
         </button>
       </div>
     </>

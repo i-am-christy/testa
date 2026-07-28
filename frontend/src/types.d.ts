@@ -8,11 +8,22 @@ declare global {
     first_name: string;
     last_name: string;
     password: string;
-    confirmPassword: string;
+    confirm_password: string;
 
-    icanNumber: string;
+    ican_number: string;
     email: string;
-    phoneNumber: number;
+    phone_number: string;
+  };
+
+  type AuthUser = {
+    id: string;
+    email: string;
+    first_name: string;
+    last_name: string;
+    avatar_url: string | null;
+    phone_number: string;
+    ican_number: string;
+    is_admin: boolean;
   };
   type Answer = {
   questionId: number;

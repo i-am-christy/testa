@@ -10,7 +10,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@ricky0123/vad-web": "^0.0.22",
     "@tailwindcss/vite": "^4.1.11",
+    "onnxruntime-web": "^1.18.0",
     "aos": "^2.3.4",
     "axios": "^1.11.0",
     "chart.js": "^4.5.0",

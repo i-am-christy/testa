@@ -1,0 +1,11 @@
+.env
+.venv
+admin.txt
+
+__pycache__/
+*.py[cod]
+
+# CV model weights are downloaded at deploy time (see download_assets.sh),
+# not committed.
+*.dat
+*.pt

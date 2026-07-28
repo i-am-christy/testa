@@ -2,6 +2,7 @@ import { Routes, Route } from "react-router-dom";
 import Auth from "../pages/auth/Auth";
 import Dashboard from "../pages/Dashboard/Dashboard";
 import ExamInstructions from "../pages/Exam/ExamInstructions";
+import ExamVerify from "../pages/Exam/ExamVerify";
 import Exams from "../pages/Exam/Exams";
 import ExamSubmit from "../pages/Exam/ExamSubmit";
 import Analysis from "../pages/Analysis/Analysis";
@@ -17,6 +18,7 @@ const Router = () => {
       <Route path="/" element={<Auth />} />
       <Route path="/dashboard" element={<Dashboard />} />
       <Route path="/dashboard/exam-rules" element={<ExamInstructions />} />
+      <Route path="/dashboard/exam/verify" element={<ExamVerify />} />
       <Route path="/dashboard/exam" element={<Exams />} />
       <Route path="/dashboard/exam-submitted" element={<ExamSubmit />} />
       <Route path="dashboard/analysis" element={<Analysis />} />

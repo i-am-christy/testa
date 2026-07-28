@@ -89,7 +89,7 @@ const ExamInstructions = () => {
           </ul>
           <div className="w-full flex justify-center">
             <button
-              onClick={() => navigate("/dashboard/exam")}
+              onClick={() => navigate("/dashboard/exam/verify")}
               className="w-auto px-4 rounded-sm py-3 mt-8 bg-[var(--primary-color)] text-white"
             >
               I understand, Proceed to verification

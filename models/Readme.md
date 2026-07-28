@@ -1,4 +1,11 @@
-# Face Verification System
+# Face Verification System (exploratory notebooks)
+
+> **These notebooks are exploratory scratch work, not the running system.** The logic here was
+> carried over into the real backend service at `../backend/api/v1/services/verification.py`
+> (identity + blink liveness) and `../backend/api/v1/services/proctoring.py` (gaze via dlib
+> landmarks + solvePnP, YOLOv8n object/multi-person detection, violation logging), served over
+> websockets from `../backend/api/v1/routes/verification.py`. See the top-level `../README.md`
+> for how to actually run the proctoring system.
 
 This project implements a real-time face verification and liveness detection system using a webcam feed. It verifies a user against a provided reference image and performs a liveness check by detecting blinks.
 
